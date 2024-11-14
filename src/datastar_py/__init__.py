@@ -1,5 +1,2 @@
-class ServerSentEventGenerator:
 
-    def __init__(self) -> None:
-        pass
-
+from .sse import ServerSentEventGenerator
