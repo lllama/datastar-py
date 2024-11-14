@@ -25,9 +25,11 @@ class ServerSentEventGenerator:
         prefix = []
         if event_id:
             prefix.append(f"id: {event_id}")
+
+        prefix.append(f"event: {event_type}")
+
         if retry_duration:
             prefix.append(f"retry: {retry_duration}")
-        prefix.append(f"event: {event_type}")
 
         data_lines.append("\n")
 
@@ -55,7 +57,7 @@ class ServerSentEventGenerator:
         if settle_duration:
             data_lines.append(f"data: settle {settle_duration}")
 
-        data_lines.extend(f"data: {x}" for x in data.splitlines())
+        data_lines.extend(f"data: fragment {x}" for x in data.splitlines())
 
         return self.send(FRAGMENT, data_lines, event_id, retry_duration)
 
