@@ -18,9 +18,6 @@ UPSERT_ATTRIBUTES = "upsertAttributes"
 
 class ServerSentEventGenerator:
 
-    def __init__(self) -> None:
-        self.event_id = 1
-
     def send(self, event_type, data_lines, event_id=None, retry_duration=1_000) -> str:
 
         if event_id:
