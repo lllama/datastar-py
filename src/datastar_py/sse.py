@@ -1,3 +1,5 @@
+from itertools import chain
+
 # Event Types
 FRAGMENT = "datastar-fragment"
 SIGNAL = "datastar-signal"
@@ -20,14 +22,16 @@ class ServerSentEventGenerator:
 
     def send(self, event_type, data_lines, event_id=None, retry_duration=1_000) -> str:
 
+        prefix = []
         if event_id:
-            data_lines.append(f"id: {event_id}")
+            prefix.append(f"id: {event_id}")
         if retry_duration:
-            data_lines.append(f"retry: {retry_duration}")
-        data_lines.append(f"event: {event_type}")
+            prefix.append(f"retry: {retry_duration}")
+        prefix.append(f"event: {event_type}")
+
         data_lines.append("\n")
 
-        return "\n".join(data_lines)
+        return "\n".join(chain(prefix, data_lines))
 
     def render_fragment(
         self,
