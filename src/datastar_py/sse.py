@@ -42,7 +42,7 @@ class ServerSentEventGenerator:
         event_id=None,
         retry_duration=1_000,
     ):
-        data_lines = [f"data: {x}" for x in data]
+        data_lines = []
         if merge_mode:
             data_lines.append(f"data: merge {merge_mode}")
         if selector:
@@ -54,6 +54,8 @@ class ServerSentEventGenerator:
         if settle_duration:
             data_lines.append(f"data: settle {settle_duration}")
 
+        data_lines.extend(f"data: {x}" for x in data)
+
         return self.send(FRAGMENT, data_lines, event_id, retry_duration)
 
     def remove_fragments(
@@ -64,19 +66,29 @@ class ServerSentEventGenerator:
         event_id=None,
         retry_duration=1_000,
     ):
-        pass
+        data_lines = []
+        if selector:
+            data_lines.append(f"data: selector {selector}")
+        if use_view_transition:
+            data_lines.append("data: useViewTransition true")
+        else:
+            data_lines.append("data: useViewTransition false")
+        if settle_duration:
+            data_lines.append(f"data: settle {settle_duration}")
+
+        return self.send(REMOVE, data_lines, event_id, retry_duration)
 
     def patch_store(self, data, event_id, only_if_missing=False, retry_duration=1_000):
-        pass
+        raise NotImplementedError()
 
     def remove_from_store(self, paths, event_id, retry_duration=1_000):
-        pass
+        raise NotImplementedError()
 
     def redirect(self, url, event_id, retry_duration=1_000):
-        pass
+        raise NotImplementedError()
 
     def console(self, mode, message, event_id, retry_duration=1_000):
-        pass
+        raise NotImplementedError()
 
 
 """
