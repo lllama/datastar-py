@@ -85,10 +85,14 @@ class ServerSentEventGenerator:
 
         data_lines.extend(f"data: {x}" for x in data.splitlines())
 
-        return self.send(REMOVE, data_lines, event_id, retry_duration)
+        return self.send(SIGNAL, data_lines, event_id, retry_duration)
 
     def remove_from_store(self, paths, event_id, retry_duration=1_000):
-        raise NotImplementedError()
+        data_lines = []
+
+        data_lines.extend(f"data: {x}" for x in paths.splitlines())
+
+        return self.send(REMOVE, data_lines, event_id, retry_duration)
 
     def redirect(self, url, event_id, retry_duration=1_000):
         raise NotImplementedError()
