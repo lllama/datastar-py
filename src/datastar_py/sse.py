@@ -95,10 +95,14 @@ class ServerSentEventGenerator:
         return self.send(REMOVE, data_lines, event_id, retry_duration)
 
     def redirect(self, url, event_id, retry_duration=1_000):
-        raise NotImplementedError()
+        data_lines = [f"data: url {url}"]
+
+        return self.send(REDIRECT, data_lines, event_id, retry_duration)
 
     def console(self, mode, message, event_id, retry_duration=1_000):
-        raise NotImplementedError()
+        data_lines = [f"data: {mode} {message}"]
+
+        return self.send(REDIRECT, data_lines, event_id, retry_duration)
 
 
 """
