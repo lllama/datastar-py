@@ -54,7 +54,7 @@ class ServerSentEventGenerator:
         if settle_duration:
             data_lines.append(f"data: settle {settle_duration}")
 
-        data_lines.extend(f"data: {x}" for x in data)
+        data_lines.extend(f"data: {x}" for x in data.splitlines())
 
         return self.send(FRAGMENT, data_lines, event_id, retry_duration)
 
@@ -79,7 +79,13 @@ class ServerSentEventGenerator:
         return self.send(REMOVE, data_lines, event_id, retry_duration)
 
     def patch_store(self, data, event_id, only_if_missing=False, retry_duration=1_000):
-        raise NotImplementedError()
+        data_lines = []
+        if only_if_missing:
+            data_lines.append("data: onlyIfMissing true")
+
+        data_lines.extend(f"data: {x}" for x in data.splitlines())
+
+        return self.send(REMOVE, data_lines, event_id, retry_duration)
 
     def remove_from_store(self, paths, event_id, retry_duration=1_000):
         raise NotImplementedError()
