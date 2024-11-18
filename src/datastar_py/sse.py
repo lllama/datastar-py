@@ -20,7 +20,7 @@ UPSERT_ATTRIBUTES = "upsertAttributes"
 
 class ServerSentEventGenerator:
 
-    def send(self, event_type, data_lines, event_id=None, retry_duration=1_000) -> str:
+    def _send(self, event_type, data_lines, event_id=None, retry_duration=1_000) -> str:
 
         prefix = []
         if event_id:
@@ -59,7 +59,7 @@ class ServerSentEventGenerator:
 
         data_lines.extend(f"data: fragment {x}" for x in data.splitlines())
 
-        return self.send(FRAGMENT, data_lines, event_id, retry_duration)
+        return self._send(FRAGMENT, data_lines, event_id, retry_duration)
 
     def remove_fragments(
         self,
@@ -79,7 +79,7 @@ class ServerSentEventGenerator:
         if settle_duration:
             data_lines.append(f"data: settle {settle_duration}")
 
-        return self.send(REMOVE, data_lines, event_id, retry_duration)
+        return self._send(REMOVE, data_lines, event_id, retry_duration)
 
     def patch_store(self, data, event_id, only_if_missing=False, retry_duration=1_000):
         data_lines = []
@@ -88,21 +88,21 @@ class ServerSentEventGenerator:
 
         data_lines.extend(f"data: {x}" for x in data.splitlines())
 
-        return self.send(SIGNAL, data_lines, event_id, retry_duration)
+        return self._send(SIGNAL, data_lines, event_id, retry_duration)
 
     def remove_from_store(self, paths, event_id, retry_duration=1_000):
         data_lines = []
 
         data_lines.extend(f"data: {x}" for x in paths.splitlines())
 
-        return self.send(REMOVE, data_lines, event_id, retry_duration)
+        return self._send(REMOVE, data_lines, event_id, retry_duration)
 
     def redirect(self, url, event_id, retry_duration=1_000):
         data_lines = [f"data: url {url}"]
 
-        return self.send(REDIRECT, data_lines, event_id, retry_duration)
+        return self._send(REDIRECT, data_lines, event_id, retry_duration)
 
     def console(self, mode, message, event_id, retry_duration=1_000):
         data_lines = [f"data: {mode} {message}"]
 
-        return self.send(REDIRECT, data_lines, event_id, retry_duration)
+        return self._send(REDIRECT, data_lines, event_id, retry_duration)
