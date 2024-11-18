@@ -35,7 +35,7 @@ class ServerSentEventGenerator:
 
         return "\n".join(chain(prefix, data_lines))
 
-    def render_fragment(
+    def merge_fragment(
         self,
         data,
         selector=None,
@@ -81,7 +81,7 @@ class ServerSentEventGenerator:
 
         return self._send(REMOVE, data_lines, event_id, retry_duration)
 
-    def patch_store(self, data, event_id, only_if_missing=False, retry_duration=1_000):
+    def merge_store(self, data, event_id, only_if_missing=False, retry_duration=1_000):
         data_lines = []
         if only_if_missing:
             data_lines.append("data: onlyIfMissing true")
